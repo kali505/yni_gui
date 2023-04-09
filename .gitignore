@@ -1,0 +1,9 @@
+libyni/target
+libyni/Cargo.lock
+
+pyyni/target
+pyyni/Cargo.lock
+
+build
+dist
+.vscode
