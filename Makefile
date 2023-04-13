@@ -23,7 +23,7 @@ cross_release: cross_build
 
 clean:
 	$(MAKE) -C pyyni clean
-	-$(rm) -f dist/*
+	-$(rm) -rf dist/*
 
 pyyni/pyyni.so:
 	$(MAKE) -C pyyni build

@@ -57,7 +57,18 @@ class MainWin:
         self.filename = None
 
         self.input_stage()
+        self.win.protocol('WM_DELETE_WINDOW', self.on_close)
+
+    def on_close(self):
+        if tk.messagebox.askyesno('확인', '정말 종료하겠습니까?'):
+            self.quit()
+
+    def run(self):
         self.win.mainloop()
+
+    def quit(self):
+        self.win.destroy()
+        del (self)
 
     def input_stage(self):
         menu = tk.Menu(self.win)
@@ -72,13 +83,15 @@ class MainWin:
         self.win.config(menu=menu)
 
         self.scroll = tk.Scrollbar(self.win, orient='vertical')
-        self.scroll.place(relx=.98, rely=.01, relheight=.85)
+        self.scroll.place(relx=.98, rely=.01, relheight=.90)
 
         self.textbox = tk.Text(self.win, fg=COLOR_FONT, bg=COLOR_WIDGET_BACKGROUND,
                                yscrollcommand=self.scroll.set)
         self.textbox.insert(0.0, self.textsave)
         self.textbox.place(relx=.01, rely=.01, relwidth=.97,
                            relheight=.90)
+
+        self.scroll.config(command=self.textbox.yview)
 
         self.basebox_vcmd = self.win.register(self.basebox_validate)
         self.basebox = BaseEntry(self.win, placeholder='2', value=self.basesave, fg=COLOR_FONT, bg=COLOR_WIDGET_BACKGROUND, validate='all',
@@ -120,7 +133,7 @@ class MainWin:
     def input_menu_file_save(self):
         self.textsave = self.textbox.get(0.0, 'end - 1c')
         if self.filename != None and os.path.exists(self.filename):
-            f = open(self.filename, 'w')
+            f = open(self.filename, 'w', encoding="utf-8")
             f.write(self.textsave)
         else:
             self.input_menu_file_save_as()
@@ -134,7 +147,7 @@ class MainWin:
             return
 
         self.filename = filename
-        f = open(self.filename, 'w')
+        f = open(self.filename, 'w', encoding="utf-8")
         f.write(self.textsave)
 
     def basebox_validate(self, P):
@@ -171,11 +184,13 @@ class MainWin:
         self.scroll.place(relx=.98, rely=.01, relheight=.9)
 
         self.output = tk.Text(self.win, fg=COLOR_FONT,
-                              bg=COLOR_WIDGET_BACKGROUND, yscrollcommand=self.scroll.set, wrap='word')
+                              bg=COLOR_WIDGET_BACKGROUND, yscrollcommand=self.scroll.set, wrap='word', spacing2=10)
         self.output.insert('end', self.outtext)
         self.output.configure(state="disabled")
         self.output.place(relx=.01, rely=.01, relwidth=.97,
                           relheight=.9)
+
+        self.scroll.config(command=self.output.yview)
 
         self.returnbtn = tk.Button(self.win, text='돌아가기',
                                    command=self.on_return_btn_pressed)
@@ -188,7 +203,7 @@ class MainWin:
         if filename == ():
             return
 
-        f = open(filename, 'w')
+        f = open(filename, 'w', encoding="utf-8")
         f.write(self.outtext)
 
     def on_return_btn_pressed(self):
@@ -198,7 +213,8 @@ class MainWin:
 
 
 def main():
-    MainWin()
+    w = MainWin()
+    w.run()
 
 
 if __name__ == '__main__':
